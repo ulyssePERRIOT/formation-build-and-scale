@@ -41,7 +41,7 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
 #mouse-gradient{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,150,255,0.08) 0%,transparent 70%);pointer-events:none;z-index:1;transform:translate(-50%,-50%);}
 
 /* ══════ ROOT ══════ */
-#formation-root{background:var(--blue1);color:#fff;width:100%;display:flex;flex-direction:column;position:relative;overflow-x:hidden;max-width:100%;}
+#formation-root{background:var(--blue1);color:#fff;width:100%;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;max-width:100%;}
 
 /* ══════ TOPBAR ══════ */
 .topbar{height:60px;flex-shrink:0;background:rgba(10,15,46,0.95);border-bottom:1px solid rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:relative;z-index:100;backdrop-filter:blur(20px);width:100%;box-sizing:border-box;overflow:hidden;}
@@ -1619,10 +1619,6 @@ var lessonOrder = [
 
 var currentLessonId = null;
 
-/* Variables globales pour curseur, canvas, animations */
-var cursor = null, trail = null, mx = 0, my = 0, tx = 0, ty = 0;
-var canvas = null, ctx = null, W = 0, H = 0, pts = [];
-
 /* ══════ HAUTEUR DYNAMIQUE (fix Systeme.io) ══════ */
 function setRootSize(){
   var root = document.getElementById('formation-root');
@@ -1652,7 +1648,8 @@ function setRootSize(){
   document.body.style.padding = '0';
   document.documentElement.style.overflow = 'visible';
 }
-setRootSize = null; /* Exécuté dans initApp au lieu de globalement */
+setRootSize();
+window.addEventListener('resize', setRootSize);
 
 /* ══════ RETOUR ACCUEIL ══════ */
 function goHome(){
@@ -1670,6 +1667,71 @@ if(sidebarHomeBtn) sidebarHomeBtn.addEventListener('click', goHome);
 
 var topbarLogo = document.getElementById('topbarLogo');
 if(topbarLogo) topbarLogo.addEventListener('click', goHome);
+
+/* ══════ NAVIGATION SIDEBAR ══════ */
+
+/* Ajouter data-mod aux headers */
+document.querySelectorAll('.sb-mod-header').forEach(function(header, idx){
+  header.setAttribute('data-mod', idx);
+  header.addEventListener('click',function(){
+    /* Verifier si le module est deverrouille */
+    var moduleNum = parseInt(idx);
+    var isUnlocked = isModuleUnlocked(moduleNum);
+    
+    if(!isUnlocked){
+      event.preventDefault();
+      event.stopPropagation();
+      showLockedToast();
+      return;
+    }
+    
+    /* Module deverrouille = peut etre deplie */
+    var mod = header.closest('.sb-module');
+    var isOpen = mod.classList.contains('open');
+    
+    /* Fermer tous les autres modules avec animation */
+    document.querySelectorAll('.sb-module.open').forEach(function(otherMod){
+      if(otherMod !== mod){
+        otherMod.classList.remove('open');
+      }
+    });
+    
+    /* Toggle le module courant */
+    if(!isOpen){
+      /* Ouvrir : calculer scrollHeight et appliquer */
+      mod.classList.add('open');
+      var lessonsList = mod.querySelector('.sb-lessons');
+      if(lessonsList){
+        setTimeout(function(){
+          var height = lessonsList.scrollHeight;
+          mod.style.setProperty('--lessons-height', height+'px');
+        }, 10);
+      }
+    } else {
+      /* Fermer */
+      mod.classList.remove('open');
+    }
+  });
+});
+
+document.querySelectorAll('.sb-lesson').forEach(function(el){
+  el.addEventListener('click',function(e){
+    var id = el.getAttribute('data-lesson-id');
+    if(!lessons[id]) return;
+    
+    /* Vérifier déblocage linéaire */
+    var unlocked = isLessonUnlocked(id);
+    
+    if(!unlocked){
+      e.preventDefault();
+      e.stopPropagation();
+      showLockedToast();
+      return;
+    }
+    
+    openLesson(id);
+  });
+});
 
 /* ══════ OUVRIR UNE LEÇON ══════ */
 function openLesson(id){
@@ -1819,8 +1881,7 @@ document.addEventListener('touchmove', function(e){
   e.stopImmediatePropagation();
 }, { passive: true, capture: true });
 
-/* Scroll progress - Exécuté dans initApp au lieu de globalement */
-/* window.addEventListener('scroll', updateScrollProgressBar, { passive: true }); */
+window.addEventListener('scroll', updateScrollProgressBar, { passive: true });
 
 /* ══════ EFFET TYPEWRITER ══════ */
 function initTypewriter(){
@@ -1869,6 +1930,10 @@ function initTypewriter(){
   typewriterEffect();
 }
 
+window.addEventListener('DOMContentLoaded',function(){
+  initTypewriter();
+});
+
 /* ══════ SCROLL PROGRESS BAR ══════ */
 function updateScrollProgressBar(){
   var mainContent = document.getElementById('mainContent');
@@ -1880,13 +1945,40 @@ function updateScrollProgressBar(){
   document.getElementById('scrollProgressBar').style.width = Math.min(scrollProgress, 100) + '%';
 }
 
-/* ══════ INITIALISATION APP - TOUS LES EVENT LISTENERS ET SETUP DANS initApp() ══════ */
+if(document.getElementById('mainContent')) document.getElementById('mainContent').addEventListener('scroll', updateScrollProgressBar, { passive: true });
+if(document.getElementById('lessonBody')) document.getElementById('lessonBody').addEventListener('scroll', updateScrollProgressBar, { passive: true });
+
+/* ══════ CURSEUR ══════ */
+var cursor=document.getElementById('cursor'),trail=document.getElementById('cursor-trail');
+var mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',function(e){
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+  document.getElementById('mouse-gradient').style.left=mx+'px';
+  document.getElementById('mouse-gradient').style.top=my+'px';
+});
+(function animT(){tx+=(mx-tx)*.12;ty+=(my-ty)*.12;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animT)})();
+document.querySelectorAll('a,button,.sb-lesson,.sb-mod-header').forEach(function(el){
+  el.addEventListener('mouseenter',function(){cursor.style.width='20px';cursor.style.height='20px';cursor.style.opacity='.5';});
+  el.addEventListener('mouseleave',function(){cursor.style.width='12px';cursor.style.height='12px';cursor.style.opacity='1';});
+});
+
+/* ══════ PARTICULES ══════ */
+var canvas=document.getElementById('canvas-bg'),ctx=canvas.getContext('2d');
+var W,H,pts=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+function mkPt(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,a:Math.random()*.5+.1,p:Math.random()*Math.PI*2};}
+for(var i=0;i<90;i++)pts.push(mkPt());
 (function draw(){
+  if (!canvas || !ctx) return;
   ctx.clearRect(0,0,W,H);
   for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<100){ctx.beginPath();ctx.strokeStyle='rgba(0,150,255,'+(0.08*(1-d/100))+')';ctx.lineWidth=.5;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}
-  pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.p+=.02;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,255,'+(p.a*(.7+.3*Math.sin(p.p)))+')';ctx.fill();var dx=mx-p.x,dy=my-p.y,dd=Math.sqrt(dx*dx+dy*dy);if(dd<120){p.vx+=dx/dd*.03;p.vy+=dy/dd*.03;}p.vx*=.99;p.vy*=.99;});
-  requestAnimationFrame(draw);
-})();
+      pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.p+=.02;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,255,'+(p.a*(.7+.3*Math.sin(p.p)))+')';ctx.fill();var dx=mx-p.x,dy=my-p.y,dd=Math.sqrt(dx*dx+dy*dy);if(dd<120){p.vx+=dx/dd*.03;p.vy+=dy/dd*.03;}p.vx*=.99;p.vy*=.99;});
+      requestAnimationFrame(draw);
+    })();
+  }
+});
 
 /* ══════ PROGRESSION & DÉBLOCAGE ══════ */
 
@@ -2305,114 +2397,12 @@ function checkAndShowNextModuleBtn(lessonId){
   };
 }
 
-/* ══════ INITIALISATION APP ══════ */
+/* ══════ INITIALISATION APP SÉCURISÉE SYSTEME.IO ══════ */
 function initApp(){
   /* Initialiser progression */
   updateProgressBar();
   updateSidebarProgress();
   initializeStreaks();
-  
-  /* HAUTEUR DYNAMIQUE - Corriger le redimensionnement de l'iframe */
-  try { setRootSize(); } catch(e) {}
-  setRootSize();
-  window.addEventListener('resize', setRootSize);
-  
-  /* NAVIGATION SIDEBAR - Ajouter data-mod aux headers */
-  var headers = document.querySelectorAll('.sb-mod-header');
-  headers.forEach(function(header, idx){
-    header.setAttribute('data-mod', idx);
-    header.addEventListener('click',function(){
-      var moduleNum = parseInt(idx);
-      var isUnlocked = isModuleUnlocked(moduleNum);
-      
-      if(!isUnlocked){
-        event.preventDefault();
-        event.stopPropagation();
-        showLockedToast();
-        return;
-      }
-      
-      var mod = header.closest('.sb-module');
-      var isOpen = mod.classList.contains('open');
-      
-      document.querySelectorAll('.sb-module.open').forEach(function(otherMod){
-        if(otherMod !== mod){
-          otherMod.classList.remove('open');
-        }
-      });
-      
-      if(!isOpen){
-        mod.classList.add('open');
-        var lessonsList = mod.querySelector('.sb-lessons');
-        if(lessonsList){
-          setTimeout(function(){
-            var height = lessonsList.scrollHeight;
-            mod.style.setProperty('--lessons-height', height+'px');
-          }, 10);
-        }
-      } else {
-        mod.classList.remove('open');
-      }
-    });
-  });
-  
-  /* LEÇONS - Ajouter event listeners */
-  var lessons_els = document.querySelectorAll('.sb-lesson');
-  lessons_els.forEach(function(el){
-    el.addEventListener('click',function(e){
-      var id = el.getAttribute('data-lesson-id');
-      if(!lessons[id]) return;
-      
-      var unlocked = isLessonUnlocked(id);
-      
-      if(!unlocked){
-        e.preventDefault();
-        e.stopPropagation();
-        showLockedToast();
-        return;
-      }
-      
-      openLesson(id);
-    });
-  });
-  
-  /* CURSEUR - Ajouter event listeners hover */
-  document.querySelectorAll('a,button,.sb-lesson,.sb-mod-header').forEach(function(el){
-    if(el && cursor){
-      el.addEventListener('mouseenter',function(){if(cursor){cursor.style.width='20px';cursor.style.height='20px';cursor.style.opacity='.5';}});
-      el.addEventListener('mouseleave',function(){if(cursor){cursor.style.width='12px';cursor.style.height='12px';cursor.style.opacity='1';}});
-    }
-  });
-  
-  /* CANVAS PARTICULES - Initialiser */
-  try {
-    canvas = document.getElementById('canvas-bg');
-    if(canvas){
-      ctx = canvas.getContext('2d');
-      function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-      resize();
-      window.addEventListener('resize',resize);
-      
-      pts = [];
-      function mkPt(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,a:Math.random()*.5+.1,p:Math.random()*Math.PI*2};}
-      for(var i=0;i<90;i++)pts.push(mkPt());
-      (function draw(){
-        ctx.clearRect(0,0,W,H);
-        for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<100){ctx.beginPath();ctx.strokeStyle='rgba(0,150,255,'+(0.08*(1-d/100))+')';ctx.lineWidth=.5;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}
-        for(var i=0;i<pts.length;i++){pts[i].x+=pts[i].vx;pts[i].y+=pts[i].vy;if(pts[i].x<0||pts[i].x>W)pts[i].vx*=-1;if(pts[i].y<0||pts[i].y>H)pts[i].vy*=-1;}
-        requestAnimationFrame(draw);
-      })();
-    }
-  } catch(e){}
-  
-  /* SCROLL PROGRESS - Event listeners sûrs */
-  var mainContent = document.getElementById('mainContent');
-  var lessonBody = document.getElementById('lessonBody');
-  if(mainContent) mainContent.addEventListener('scroll', updateScrollProgressBar, { passive: true });
-  if(lessonBody) lessonBody.addEventListener('scroll', updateScrollProgressBar, { passive: true });
-  
-  /* TYPEWRITER */
-  try { initTypewriter(); } catch(e){}
   
   /* Animer les barres après un court délai */
   setTimeout(function(){
