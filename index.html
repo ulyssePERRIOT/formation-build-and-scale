@@ -358,9 +358,10 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .topbar-course{display:none;}
   .topbar-progress-wrap{display:none;}
   .topbar-avatar{width:28px;height:28px;font-size:11px;}
-  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:50;transform:translateX(-100%);width:100% !important;overflow-y:auto;}
+  .app-body{overflow:visible;}
+  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:1000;transform:translateX(-100%);width:100% !important;overflow-y:auto;max-height:calc(100vh - 56px);pointer-events:auto;}
   .sidebar.mobile-open{transform:translateX(0);}
-  .sidebar-overlay.active{display:block;z-index:49;}
+  .sidebar-overlay.active{display:block;z-index:999;}
   .sidebar-toggle{display:flex;}
   .sidebar-head{padding:12px 14px 10px;}
   .sidebar-head-title{font-size:13px;}
@@ -634,17 +635,41 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
 /* ══════ ÉCRAN D'ACCÈS EMAIL ══════ */
 #email-access-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--blue1);display:flex;align-items:center;justify-content:center;z-index:10000;flex-direction:column;}
 .email-access-card{background:rgba(10,15,46,0.8);border:1px solid rgba(0,212,255,0.2);border-radius:20px;padding:48px 40px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);}
+@media(max-width:530px){
+  .email-access-card{padding:32px 20px;border-radius:16px;max-width:calc(100% - 24px);}
+}
 .email-access-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;}
+@media(max-width:530px){
+  .email-access-logo{font-size:24px;margin-bottom:16px;}
+}
 .email-access-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:12px;}
+@media(max-width:530px){
+  .email-access-title{font-size:20px;margin-bottom:8px;}
+}
 .email-access-subtitle{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;}
+@media(max-width:530px){
+  .email-access-subtitle{font-size:12px;margin-bottom:24px;}
+}
 .email-access-form{display:flex;flex-direction:column;gap:14px;}
+@media(max-width:530px){
+  .email-access-form{gap:12px;}
+}
 .email-access-input{padding:14px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:10px;color:#fff;font-size:14px;font-family:'Space Grotesk',sans-serif;transition:all 0.3s;}
+@media(max-width:530px){
+  .email-access-input{font-size:16px;padding:12px 12px;min-height:48px;}
+}
 .email-access-input:focus{outline:none;background:rgba(255,255,255,0.08);border-color:rgba(0,212,255,0.4);box-shadow:0 0 12px rgba(0,212,255,0.2);}
 .email-access-input::placeholder{color:rgba(255,255,255,0.3);}
 .email-access-btn{padding:13px 24px;background:linear-gradient(135deg,#00d4ff 0%,#00a8cc 100%);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 6px 20px rgba(0,212,255,0.3);}
+@media(max-width:530px){
+  .email-access-btn{min-height:48px;padding:12px 20px;width:100%;font-size:15px;}
+}
 .email-access-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,212,255,0.45);}
 .email-access-btn:active{transform:translateY(0);}
 .email-access-error{color:#ff6464;font-size:13px;margin-top:12px;min-height:16px;}
+@media(max-width:530px){
+  .email-access-error{font-size:12px;margin-top:8px;}
+}
 .email-access-success{display:none;}
 </style>
 </head>
