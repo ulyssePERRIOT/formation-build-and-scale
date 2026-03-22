@@ -1789,7 +1789,7 @@ if(topbarLogo) topbarLogo.addEventListener('click', goHome);
 /* Ajouter data-mod aux headers */
 document.querySelectorAll('.sb-mod-header').forEach(function(header, idx){
   header.setAttribute('data-mod', idx);
-  header.addEventListener('click',function(){
+  header.addEventListener('click',function(event){
     /* Verifier si le module est deverrouille */
     var moduleNum = parseInt(idx);
     var isUnlocked = isModuleUnlocked(moduleNum);
@@ -1827,6 +1827,7 @@ document.querySelectorAll('.sb-mod-header').forEach(function(header, idx){
       /* Fermer */
       mod.classList.remove('open');
     }
+    event.stopPropagation();
   });
 });
 
@@ -1846,6 +1847,7 @@ document.querySelectorAll('.sb-lesson').forEach(function(el){
     }
     
     openLesson(id);
+    e.stopPropagation();
   });
 });
 
