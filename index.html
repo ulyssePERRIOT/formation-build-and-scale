@@ -361,7 +361,7 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .topbar-progress-wrap{display:none;}
   .topbar-avatar{width:28px;height:28px;font-size:11px;}
   .app-body{overflow:visible;}
-  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:1000;transform:translateX(-100%);width:100% !important;overflow-y:auto;max-height:calc(100vh - 56px);pointer-events:auto;}
+  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:1000;transform:translateX(-100%);width:100% !important;overflow-y:auto;max-height:calc(100vh - 56px);pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
   .sidebar.mobile-open{transform:translateX(0);}
   .sidebar-overlay.active{display:block;z-index:999;}
   .sidebar-toggle{display:flex;}
@@ -369,13 +369,13 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .sidebar-head-title{font-size:13px;}
   .sidebar-modules{padding:4px 0 12px;}
   .sb-phase-label{font-size:7px;padding:12px 12px 4px;}
-  .sb-mod-header{padding:10px 12px 10px 12px;}
+  .sb-mod-header{padding:10px 12px 10px 12px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-mod-icon{width:32px;height:32px;font-size:12px;}
   .sb-mod-icon svg{width:16px;height:16px;}
   .sb-mod-num{font-size:13px;}
   .sb-mod-name{font-size:12px;}
   .sb-mod-meta{font-size:9px;}
-  .sb-lesson{padding:6px 12px 6px 20px;}
+  .sb-lesson{padding:6px 12px 6px 20px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-lesson-icon{width:16px;height:16px;margin-top:0px;}
   .sb-lesson-num{font-size:8px;min-width:18px;}
   .sb-lesson-name{font-size:11px;}
@@ -442,18 +442,18 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .topbar-course{display:none;}
   .topbar-progress-wrap{display:none;}
   .topbar-avatar{width:28px;height:28px;font-size:11px;}
-  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:50;transform:translateX(-100%);width:100% !important;overflow-y:auto;}
+  .sidebar{position:fixed;left:0;top:56px;bottom:0;z-index:1000;transform:translateX(-100%);width:100% !important;overflow-y:auto;pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
   .sidebar.mobile-open{transform:translateX(0);}
   .sidebar-overlay.active{display:block;}
   .sidebar-toggle{display:flex;}
   .sidebar-head{padding:14px 16px 12px;}
   .sidebar-head-title{font-size:14px;}
-  .sb-mod-header{padding:11px 14px 11px 14px;}
+  .sb-mod-header{padding:11px 14px 11px 14px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-mod-icon{width:34px;height:34px;font-size:12px;}
   .sb-mod-icon svg{width:17px;height:17px;}
   .sb-mod-num{font-size:14px;}
   .sb-mod-name{font-size:13px;}
-  .sb-lesson{padding:7px 14px 7px 22px;}
+  .sb-lesson{padding:7px 14px 7px 22px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-lesson-icon{width:18px;height:18px;}
   .sb-lesson-num{font-size:9px;}
   .sb-lesson-name{font-size:11px;}
@@ -486,17 +486,17 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .topbar-course{display:none;}
   .topbar-progress-wrap{display:none;}
   .topbar-avatar{width:30px;height:30px;}
-  .sidebar{position:fixed;left:0;top:58px;bottom:0;z-index:50;transform:translateX(-100%);width:100% !important;overflow-y:auto;}
+  .sidebar{position:fixed;left:0;top:58px;bottom:0;z-index:1000;transform:translateX(-100%);width:100% !important;overflow-y:auto;pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
   .sidebar.mobile-open{transform:translateX(0);}
   .sidebar-overlay.active{display:block;}
   .sidebar-toggle{display:flex;}
   .sidebar-head{padding:14px 16px 12px;}
-  .sb-mod-header{padding:12px 16px;}
+  .sb-mod-header{padding:12px 16px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-mod-icon{width:36px;height:36px;}
   .sb-mod-icon svg{width:18px;height:18px;}
   .sb-mod-num{font-size:15px;}
   .sb-mod-name{font-size:13px;}
-  .sb-lesson{padding:8px 16px 8px 24px;}
+  .sb-lesson{padding:8px 16px 8px 24px;pointer-events:auto !important;-webkit-tap-highlight-color:transparent;min-height:44px;}
   .sb-lesson-name{font-size:12px;}
   #view-home{padding:20px 16px 44px;}
   .home-stats{grid-template-columns:1fr;gap:9px;margin-bottom:32px;}
