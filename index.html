@@ -630,11 +630,41 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
   .lesson-topbar{padding:8px 14px;}
   .lesson-content{padding:12px 14px 20px;}
 }
+
+/* ══════ ÉCRAN D'ACCÈS EMAIL ══════ */
+#email-access-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--blue1);display:flex;align-items:center;justify-content:center;z-index:10000;flex-direction:column;}
+.email-access-card{background:rgba(10,15,46,0.8);border:1px solid rgba(0,212,255,0.2);border-radius:20px;padding:48px 40px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);}
+.email-access-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;}
+.email-access-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:12px;}
+.email-access-subtitle{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;}
+.email-access-form{display:flex;flex-direction:column;gap:14px;}
+.email-access-input{padding:14px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:10px;color:#fff;font-size:14px;font-family:'Space Grotesk',sans-serif;transition:all 0.3s;}
+.email-access-input:focus{outline:none;background:rgba(255,255,255,0.08);border-color:rgba(0,212,255,0.4);box-shadow:0 0 12px rgba(0,212,255,0.2);}
+.email-access-input::placeholder{color:rgba(255,255,255,0.3);}
+.email-access-btn{padding:13px 24px;background:linear-gradient(135deg,#00d4ff 0%,#00a8cc 100%);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 6px 20px rgba(0,212,255,0.3);}
+.email-access-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,212,255,0.45);}
+.email-access-btn:active{transform:translateY(0);}
+.email-access-error{color:#ff6464;font-size:13px;margin-top:12px;min-height:16px;}
+.email-access-success{display:none;}
 </style>
 </head>
 <body>
 
-<div id="formation-root">
+<!-- Écran d'accès email -->
+<div id="email-access-screen">
+  <div class="email-access-card">
+    <div class="email-access-logo">Build & Scale</div>
+    <h1 class="email-access-title">Bienvenue</h1>
+    <p class="email-access-subtitle">Entre ton email pour accéder à la formation</p>
+    <form class="email-access-form" id="email-access-form" onsubmit="return false;">
+      <input type="email" class="email-access-input" id="email-input" placeholder="nom@email.com" autocomplete="email" />
+      <button type="button" class="email-access-btn" id="email-submit-btn">Accéder à la formation</button>
+      <div class="email-access-error" id="email-error-msg"></div>
+    </form>
+  </div>
+</div>
+
+<div id="formation-root" style="display:none;">
 <div id="scrollProgressBar"></div>
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
@@ -1012,6 +1042,60 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
 </div><!-- /#formation-root -->
 
 <script>
+/* ══════ WHITELIST EMAILS ══════ */
+const EMAILS_AUTORISES = [
+  "email1@gmail.com",
+  "email2@gmail.com"
+];
+
+function normalizeEmail(email) {
+  return email.trim().toLowerCase();
+}
+
+function checkEmailAccess() {
+  var accessEmail = localStorage.getItem('bs_access');
+  if (accessEmail) {
+    var normalized = normalizeEmail(accessEmail);
+    for (var i = 0; i < EMAILS_AUTORISES.length; i++) {
+      if (normalizeEmail(EMAILS_AUTORISES[i]) === normalized) {
+        document.getElementById('email-access-screen').style.display = 'none';
+        document.getElementById('formation-root').style.display = 'flex';
+        return;
+      }
+    }
+  }
+}
+
+function submitEmailAccess() {
+  var emailInput = document.getElementById('email-input');
+  var email = emailInput.value;
+  var errorMsg = document.getElementById('email-error-msg');
+  errorMsg.textContent = '';
+  
+  if (!email) {
+    errorMsg.textContent = 'Veuillez entrer votre email';
+    return;
+  }
+  
+  var normalized = normalizeEmail(email);
+  var found = false;
+  
+  for (var i = 0; i < EMAILS_AUTORISES.length; i++) {
+    if (normalizeEmail(EMAILS_AUTORISES[i]) === normalized) {
+      found = true;
+      break;
+    }
+  }
+  
+  if (found) {
+    localStorage.setItem('bs_access', email);
+    document.getElementById('email-access-screen').style.display = 'none';
+    document.getElementById('formation-root').style.display = 'flex';
+  } else {
+    errorMsg.textContent = 'Accès non autorisé. Contacte-moi en DM.';
+  }
+}
+
 /* ══════ DONNÉES LEÇONS ══════ */
 var lessons = {
 
@@ -1931,6 +2015,11 @@ function initTypewriter(){
 }
 
 window.addEventListener('DOMContentLoaded',function(){
+  checkEmailAccess();
+  document.getElementById('email-submit-btn').addEventListener('click', submitEmailAccess);
+  document.getElementById('email-input').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') submitEmailAccess();
+  });
   initTypewriter();
 });
 
