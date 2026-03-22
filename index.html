@@ -1977,8 +1977,6 @@ for(var i=0;i<90;i++)pts.push(mkPt());
       pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.p+=.02;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,200,255,'+(p.a*(.7+.3*Math.sin(p.p)))+')';ctx.fill();var dx=mx-p.x,dy=my-p.y,dd=Math.sqrt(dx*dx+dy*dy);if(dd<120){p.vx+=dx/dd*.03;p.vy+=dy/dd*.03;}p.vx*=.99;p.vy*=.99;});
       requestAnimationFrame(draw);
     })();
-  }
-});
 
 /* ══════ PROGRESSION & DÉBLOCAGE ══════ */
 
