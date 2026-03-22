@@ -29,7 +29,7 @@
   --secondary-size:13px;
   --secondary-color:#555;
 }
-html,body{height:100dvh;height:-webkit-fill-available;margin:0;padding:0;width:100%;overflow-x:hidden;min-width:100vw;min-height:100vh;}
+html,body{height:100%;margin:0;padding:0;background:#0a0f2e;width:100%;overflow-x:hidden;}
 body{font-family:'Space Grotesk',sans-serif;cursor:auto;background:transparent;font-size:var(--body-size);font-weight:var(--body-weight);line-height:var(--body-line-height);}
 h2{font-size:var(--h2-size);font-weight:var(--h2-weight);letter-spacing:var(--h2-letter-spacing);}
 h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
@@ -43,7 +43,7 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
 #mouse-gradient{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,150,255,0.08) 0%,transparent 70%);pointer-events:none;z-index:1;transform:translate(-50%,-50%);}
 
 /* ══════ ROOT ══════ */
-#formation-root{background:var(--blue1);color:#fff;width:100%;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;max-width:100%;}
+#formation-root{background:var(--blue1);color:#fff;width:100%;height:100%;position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;max-width:100%;}
 
 /* ══════ TOPBAR ══════ */
 .topbar{height:60px;flex-shrink:0;background:rgba(10,15,46,0.95);border-bottom:1px solid rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:relative;z-index:100;backdrop-filter:blur(20px);width:100%;box-sizing:border-box;overflow:hidden;}
@@ -138,7 +138,7 @@ h3{font-size:var(--h3-size);font-weight:var(--h3-weight);}
 .sb-module.open .sb-chevron{transform:rotate(180deg);color:rgba(0,212,255,0.6);}
 
 .sb-lessons{max-height:0;overflow:hidden;transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1);background:rgba(0,0,0,0.2);}
-.sb-module.open .sb-lessons{max-height:var(--lessons-height,600px);}
+.sb-module.open .sb-lessons{max-height:var(--lessons-height,600px);pointer-events:auto !important;z-index:99999 !important;position:relative;isolation:isolate;}
 .sb-lessons-inner{padding:4px 0 8px;border-top:1px solid rgba(255,255,255,0.05);}
 
 .sb-lesson{display:flex;align-items:flex-start;gap:9px;padding:8px 14px 8px 26px;cursor:pointer;transition:background 0.2s;position:relative;border-left:2px solid transparent;}
