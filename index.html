@@ -1189,9 +1189,12 @@ function checkEmailAccess() {
 }
 
 function submitEmailAccess() {
+  console.log('Button clicked!');
   var emailInput = document.getElementById('email-input');
   var email = emailInput.value;
   var errorMsg = document.getElementById('email-error-msg');
+  console.log('Email entered:', email);
+  console.log('EMAILS_AUTORISES:', EMAILS_AUTORISES);
   errorMsg.textContent = '';
   
   if (!email) {
@@ -1200,19 +1203,26 @@ function submitEmailAccess() {
   }
   
   var normalized = normalizeEmail(email);
+  console.log('Normalized email:', normalized);
   var found = false;
   
   for (var i = 0; i < EMAILS_AUTORISES.length; i++) {
-    if (normalizeEmail(EMAILS_AUTORISES[i]) === normalized) {
+    var normalizedAuth = normalizeEmail(EMAILS_AUTORISES[i]);
+    console.log('Comparing with:', normalizedAuth);
+    if (normalizedAuth === normalized) {
       found = true;
       break;
     }
   }
   
+  console.log('Email found:', found);
+  
   if (found) {
+    console.log('Access granted!');
     localStorage.setItem('bs_access', email);
     document.getElementById('email-access-screen').style.display = 'none';
     document.getElementById('formation-root').style.display = 'flex';
+    console.log('Screens switched');
   } else {
     errorMsg.textContent = 'Accès non autorisé. Contacte-moi en DM.';
   }
